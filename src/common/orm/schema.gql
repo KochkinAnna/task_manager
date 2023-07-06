@@ -1,0 +1,56 @@
+type User {
+  id: Int!
+  email: String!
+  password: String!
+  role: String!
+  categories: [Category!]!
+}
+
+type Category {
+  id: Int!
+  name: String!
+  dateCreated: String!
+  user: User!
+  tasks: [Task!]!
+}
+
+type Task {
+  id: Int!
+  name: String!
+  dateStart: String!
+  dateEnd: String!
+  category: Category!
+}
+
+input CreateUserInput {
+  email: String!
+  password: String!
+}
+
+input CreateCategoryInput {
+  name: String!
+}
+
+input CreateTaskInput {
+  name: String!
+  dateStart: String!
+  dateEnd: String!
+  categoryId: Int!
+}
+
+type Query {
+  getUser(id: Int!): User!
+  getCategories: [Category!]!
+  getCategory(id: Int!): Category!
+  getTasks: [Task!]!
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): User!
+  createCategory(input: CreateCategoryInput!): Category!
+  createTask(input: CreateTaskInput!): Task!
+}
+
+type Subscription {
+  taskCreated: Task!
+}

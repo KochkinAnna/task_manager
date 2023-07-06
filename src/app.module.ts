@@ -8,15 +8,12 @@ import {
   TypeOrmModuleAsyncOptions,
   TypeOrmModuleOptions,
 } from '@nestjs/typeorm';
-import { DirectiveLocation } from 'graphql/language';
-import { GraphQLDirective } from 'graphql/type';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CategoriesModule } from './categories/categories.module';
 import { CategoriesResolver } from './categories/categories.resolver';
 import { CategoriesService } from './categories/categories.service';
-import { upperDirectiveTransformer } from './common/orm/directives/upper-case.directive';
 import { TasksModule } from './tasks/tasks.module';
 import { TasksResolver } from './tasks/tasks.resolver';
 import { TasksService } from './tasks/tasks.service';
@@ -37,6 +34,7 @@ import { UsersService } from './users/users.service';
           database: process.env.DB_DATABASE,
           entities: [join(__dirname, '**', '*.entity.{ts,js}')],
           synchronize: true,
+          autoLoadEntities: true,
         };
       },
     } as TypeOrmModuleAsyncOptions),
@@ -45,17 +43,8 @@ import { UsersService } from './users/users.service';
     UsersModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: 'schema.gql',
-      transformSchema: (schema) => upperDirectiveTransformer(schema, 'upper'),
+      autoSchemaFile: join(__dirname, 'src/common/orm/schema.gql'),
       installSubscriptionHandlers: true,
-      buildSchemaOptions: {
-        directives: [
-          new GraphQLDirective({
-            name: 'upper',
-            locations: [DirectiveLocation.FIELD_DEFINITION],
-          }),
-        ],
-      },
     }),
   ],
   controllers: [AppController],
